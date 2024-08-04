@@ -302,7 +302,7 @@ public class MessageManager implements Listener {
         for (UUID id : muted) {
             ids.add(id.toString());
         }
-        plugin.getServer().getLogger().info("Saving " + ids.size() + " Players that had events muted.");
+        plugin.getLogger().info("Saving " + ids.size() + " Players that had events muted.");
         configManager.getData().set("Muted", ids);
     }
 

@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class ReloadCommand implements SubCommand {
         newConfig.reloadConfig();
         plugin.setConfigManager(newConfig);
         BlockFilter.reload();
-        plugin.getChairManager().reload(plugin);
+        plugin.getChairManager().reload();
         plugin.getMessageManager().reload();
         plugin.getMessageManager().sendLang(sender, MessagePath.COMMAND_RELOAD_SUCCESS);
     }
@@ -58,7 +57,7 @@ public class ReloadCommand implements SubCommand {
     }
 
     @Override
-    public @Nullable List<@NotNull String> onTabComplete(@NotNull CommandSender sender, @NotNull List<@NotNull String> args) {
-        return null;
+    public @NotNull List<@NotNull String> onTabComplete(@NotNull CommandSender sender, @NotNull List<@NotNull String> args) {
+        return List.of();
     }
 }

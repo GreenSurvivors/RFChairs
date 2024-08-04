@@ -61,15 +61,15 @@ public class RFChairs extends JavaPlugin {
 
         loadConfigManager();
 
-        chairManager = new ChairManager();
-        chairManager.clearFakeSeatsFromFile(this);
+        chairManager = new ChairManager(this);
+        chairManager.clearFakeSeatsFromFile();
         chairManager.loadToggled();
 
         messageManager = new MessageManager();
         messageManager.loadMuted();
 
         BlockFilter.reload();
-        chairManager.reload(this);
+        chairManager.reload();
         messageManager.reload();
         getServer().getPluginManager().registerEvents(chairManager, this);
         getServer().getPluginManager().registerEvents(messageManager, this);

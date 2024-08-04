@@ -5,6 +5,7 @@ import com.rifledluffy.chairs.command.commands.*;
 import com.rifledluffy.chairs.messages.MessagePath;
 import com.rifledluffy.chairs.messages.PlaceHolder;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Location;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -14,11 +15,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandManager implements CommandExecutor, TabCompleter {
+public class CommandManager extends Command {
     private static final String MAIN_COMMAND = "rfchairs";
     private final @NotNull ArrayList<@NotNull SubCommand> subCommands = new ArrayList<>();
 
     public CommandManager() {
+        super(MAIN_COMMAND, "The main prefix for other commands. Type /rfchairs help for more info", "/<command>", List.of("rfc"));
     }
 
     public static @NotNull String getMainCommand() {
@@ -26,13 +28,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     public void setup() {
-        PluginCommand mainCmd = RFChairs.getInstance().getCommand(MAIN_COMMAND);
-        if (mainCmd != null) {
-            mainCmd.setExecutor(this);
-            mainCmd.setTabCompleter(this);
-        } else {
-            RFChairs.getInstance().getComponentLogger().error("Could not get main command! Commands WILL be broken!");
-        }
+        RFChairs.getInstance().getServer().getCommandMap().register("rfchairs", this);
 
         this.subCommands.add(new HelpCommand());
         //this.commands.add(new InfoCommand());
@@ -42,7 +38,8 @@ public class CommandManager implements CommandExecutor, TabCompleter {
         this.subCommands.add(new MuteCommand());
     }
 
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    @Override
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (args.length == 0) {
             RFChairs.getInstance().getMessageManager().sendLang(sender, MessagePath.COMMAND_NOT_ENOUGH_ARGS);
             return true;
@@ -58,7 +55,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
 
         // clear args from subcommand
         ArrayList<String> subcommandArgList = new ArrayList<>(Arrays.asList(args));
-        subcommandArgList.remove(0);
+        subcommandArgList.removeFirst();
 
         if (target.checkPermission(sender)) {
             if (target.needsPlayer()) {
@@ -99,7 +96,7 @@ public class CommandManager implements CommandExecutor, TabCompleter {
     }
 
     @Override
-    public @Nullable List<@NotNull String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args, @Nullable Location location) {
         if (args.length == 1) {
             List<String> result = new ArrayList<>();
 
@@ -122,6 +119,6 @@ public class CommandManager implements CommandExecutor, TabCompleter {
             }
         }
 
-        return null;
+        return List.of();
     }
 }

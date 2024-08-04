@@ -2,7 +2,6 @@ package com.rifledluffy.chairs;
 
 import com.rifledluffy.chairs.chairs.BlockFilter;
 import com.rifledluffy.chairs.chairs.Chair;
-import com.rifledluffy.chairs.config.ConfigManager;
 import com.rifledluffy.chairs.events.*;
 import com.rifledluffy.chairs.messages.MessageEvent;
 import com.rifledluffy.chairs.messages.MessagePath;
@@ -23,6 +22,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDismountEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -30,19 +30,17 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
-import org.spigotmc.event.entity.EntityDismountEvent;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ChairManager implements Listener {
-    private final @NotNull RFChairs plugin = RFChairs.getPlugin(RFChairs.class);
+    private final @NotNull RFChairs plugin;
     private final @NotNull Map<@NotNull UUID, @NotNull Chair> chairMap = new HashMap<>();
     private final @NotNull List<@NotNull String> fakeSeats = new ArrayList<>();
     private final @NotNull List<@NotNull UUID> leaving = new ArrayList<>();
@@ -53,9 +51,7 @@ public class ChairManager implements Listener {
     private Vector stairSeatingPosition;
     private Vector slabSeatingPosition;
     private Vector carpetSeatingPosition;
-    private ConfigManager configManager = plugin.getConfigManager();
-    private FileConfiguration config = configManager.getConfig();
-    private PotionEffect regenEffect = new PotionEffect(PotionEffectType.REGENERATION, 655200, config.getInt("regen-potency", 0), false, false);
+    private PotionEffect regenEffect;
     private boolean regenWhenSitting;
     //Update related
     //private boolean disableCurrentUpdate; //todo
@@ -82,9 +78,13 @@ public class ChairManager implements Listener {
     private boolean exitWhereFacing;
     private @NotNull List<@NotNull World> disabledWorlds = new ArrayList<>();
 
-    public void reload(RFChairs plugin) {
-        configManager = plugin.getConfigManager();
-        config = configManager.getConfig();
+    public ChairManager(@NotNull RFChairs plugin) {
+        this.plugin = plugin;
+        this.regenEffect = new PotionEffect(PotionEffectType.REGENERATION, 655200, plugin.getConfigManager().getConfig().getInt("regen-potency", 0), false, false);
+    }
+
+    public void reload() {
+        FileConfiguration config = plugin.getConfigManager().getConfig();
 
         regenEffect = new PotionEffect(PotionEffectType.REGENERATION, 655200, config.getInt("regen-potency", 0), false, false);
         regenWhenSitting = config.getBoolean("regen-when-sitting", true);
@@ -537,7 +537,7 @@ public class ChairManager implements Listener {
         fakeSeat.addPassenger(player);
         chair.setFakeSeat(fakeSeat);
         fakeSeats.add(fakeSeat.getUniqueId().toString());
-        configManager.getData().set("UUIDs", fakeSeats);
+        plugin.getConfigManager().getData().set("UUIDs", fakeSeats);
         return true;
     }
 
@@ -591,25 +591,25 @@ public class ChairManager implements Listener {
     void saveToggled() {
         List<String> ids = new ArrayList<>();
         if (toggled.isEmpty()) {
-            configManager.getData().set("Toggled", new ArrayList<String>());
+            plugin.getConfigManager().getData().set("Toggled", new ArrayList<String>());
         }
         for (UUID id : toggled) {
             ids.add(id.toString());
         }
-        plugin.getServer().getLogger().info("Saving " + ids.size() + " Players that had toggled off.");
-        configManager.getData().set("Toggled", ids);
+        plugin.getLogger().info("Saving " + ids.size() + " Players that had toggled off.");
+        plugin.getConfigManager().getData().set("Toggled", ids);
     }
 
     void loadToggled() {
-        List<String> toggled = configManager.getData().getStringList("Toggled");
+        List<String> toggled = plugin.getConfigManager().getData().getStringList("Toggled");
         if (toggled.isEmpty()) return;
-        plugin.getServer().getLogger().info(toggled.size() + " Players had toggled off. Adding Them...");
+        plugin.getLogger().info(toggled.size() + " Players had toggled off. Adding Them...");
 
         toggled.stream()
                 .map(UUID::fromString)
                 .forEach(this.toggled::add);
 
-        configManager.getData().set("Toggled", new ArrayList<String>());
+        plugin.getConfigManager().getData().set("Toggled", new ArrayList<String>());
     }
 
     void shutdown() {
@@ -639,20 +639,20 @@ public class ChairManager implements Listener {
         for (Chair chair : chairs) clearChair(chair);
     }
 
-    public void clearFakeSeatsFromFile(JavaPlugin plugin) {
-        List<String> fakes = configManager.getData().getStringList("UUIDs");
+    public void clearFakeSeatsFromFile() {
+        List<String> fakes = plugin.getConfigManager().getData().getStringList("UUIDs");
         int leftoverFakes = fakes.size();
         if (leftoverFakes >= 1) {
-            plugin.getServer().getLogger().info("Detected " + fakes.size() + " leftover seats! Removing...");
+            plugin.getLogger().info("Detected " + fakes.size() + " leftover seats! Removing...");
             for (String fake : fakes) {
                 UUID id = UUID.fromString(fake);
                 Entity armorStand = plugin.getServer().getEntity(id);
                 if (armorStand == null) continue;
                 armorStand.remove();
             }
-            configManager.getData().set("UUIDs", new ArrayList<UUID>());
+            plugin.getConfigManager().getData().set("UUIDs", new ArrayList<UUID>());
         } else {
-            plugin.getServer().getLogger().info("No fake seats remaining! Proceeding");
+            plugin.getLogger().info("No fake seats remaining! Proceeding");
         }
     }
 

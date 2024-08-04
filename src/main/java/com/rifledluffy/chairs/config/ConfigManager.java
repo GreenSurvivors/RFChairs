@@ -35,7 +35,7 @@ public class ConfigManager {
             try {
                 fakeFile.createNewFile();
             } catch (IOException e) {
-                Bukkit.getServer().getLogger().info("[Rifle's Chairs] Could not create fakes.yml!");
+                plugin.getLogger().info("Could not create fakes.yml!");
             }
         }
 
@@ -50,7 +50,7 @@ public class ConfigManager {
         try {
             fake.save(fakeFile);
         } catch (IOException e) {
-            Bukkit.getServer().getLogger().info("[Rifle's Chairs] Could not save fakes.yml!");
+            plugin.getLogger().info("Could not save fakes.yml!");
         }
     }
 
