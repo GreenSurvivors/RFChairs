@@ -7,13 +7,11 @@ plugins {
 group = "com.rifledluffy.chairs"
 version = "7.0.1-SNAPSHOT"
 description = "Chairs but Rifle's way."
-// this is the minecraft major version. If you need a subversion like 1.20.1,
-// change it in the dependencies section as this is also used as the api version of the plugin.yml
 val mcVersion by extra("1.21.3")
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 java {
-  // Configure the java toolchain. This allows gradle to auto-provision JDK 17 on systems that only have JDK 8 installed for example.
+  // Configure the java toolchain. This allows gradle to auto-provision JDK 21 on systems that only have JDK 8 installed for example.
   toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
@@ -54,4 +52,11 @@ tasks {
           "description" to project.description,
           "apiVersion" to mcVersion)
   }
+
+    runServer {
+        downloadPlugins {
+            modrinth("worldguard", "7.0.13-beta-1")
+            modrinth("worldedit", "Bu1zaaoc")
+        }
+    }
 }
