@@ -1,15 +1,15 @@
 plugins {
     `java-library`
-    id("io.papermc.paperweight.userdev") version "1.7.1"
-	id("xyz.jpenilla.run-paper") version "2.2.3" // Adds runServer and runMojangMappedServer tasks for testing
+    id("io.papermc.paperweight.userdev") version "1.7.7"
+	id("xyz.jpenilla.run-paper") version "2.3.1" // Adds runServer and runMojangMappedServer tasks for testing
 }
 
 group = "com.rifledluffy.chairs"
-version = "7.0.0-SNAPSHOT"
+version = "7.0.1-SNAPSHOT"
 description = "Chairs but Rifle's way."
 // this is the minecraft major version. If you need a subversion like 1.20.1,
 // change it in the dependencies section as this is also used as the api version of the plugin.yml
-val mcVersion by extra("1.21")
+val mcVersion by extra("1.21.3")
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 java {
@@ -33,9 +33,9 @@ repositories {
 dependencies {
     paperweight.paperDevBundle("$mcVersion-R0.1-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.1.0-SNAPSHOT")
-    compileOnly("org.jetbrains:annotations:24.1.0")
+    compileOnly("org.jetbrains:annotations:26.0.1")
     implementation("com.github.ben-manes.caffeine:caffeine:3.1.8") // caches
-    implementation("org.bstats:bstats-bukkit:3.0.2")
+    implementation("org.bstats:bstats-bukkit:3.1.0")
 }
 
 tasks {

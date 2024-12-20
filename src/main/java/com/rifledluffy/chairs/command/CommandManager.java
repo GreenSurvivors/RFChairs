@@ -113,7 +113,7 @@ public class CommandManager extends Command {
             if (subCommand != null && subCommand.checkPermission(sender)) {
                 // clear args from subcommand
                 ArrayList<String> subcommandArgList = new ArrayList<>(Arrays.asList(args));
-                subcommandArgList.remove(0);
+                subcommandArgList.removeFirst();
 
                 return subCommand.onTabComplete(sender, subcommandArgList);
             }

@@ -46,10 +46,6 @@ public class Util {
         return BlockFilter.isStairsBlock(block.getType()) && validStair(block);
     }
 
-    private static boolean isAir(Material type) {
-        return type == Material.AIR || type == Material.CAVE_AIR || type == Material.VOID_AIR;
-    }
-
     public static boolean playerIsSeated(@NotNull UUID uuid, @NotNull Map<@NotNull UUID, @NotNull Chair> chairMap) {
         Chair chair = chairMap.get(uuid);
         return chair != null;
@@ -71,7 +67,7 @@ public class Util {
 
     private static boolean validExit(@NotNull Block block) {
         Material type = block.getType();
-        return isAir(type) || Tag.WALL_SIGNS.isTagged(type);
+        return type.isAir() || Tag.WALL_SIGNS.isTagged(type);
     }
 
     public static boolean isLiquidOrMagma(@NotNull Block block) {
@@ -93,7 +89,7 @@ public class Util {
         BlockFace side = faces.get(0);
         BlockFace otherSide = faces.get(1);
 
-        if (!isAir(block.getRelative(BlockFace.UP).getType())) {
+        if (!block.getRelative(BlockFace.UP).getType().isAir()) {
             return false;
         }
 
@@ -303,11 +299,11 @@ public class Util {
     }
 
     public static boolean canFitPlayer(@NotNull Block block) {
-        return isAir(block.getType()) && isAir(block.getRelative(BlockFace.UP).getType());
+        return block.getType().isAir() && block.getRelative(BlockFace.UP).getType().isAir();
     }
 
     public static boolean safePlace(@NotNull Block block) {
-        return !isAir(block.getRelative(BlockFace.DOWN).getType());
+        return !block.getRelative(BlockFace.DOWN).getType().isAir();
     }
 
     public static Vector getVectorDir(@NotNull Location caster, @NotNull Location target) {

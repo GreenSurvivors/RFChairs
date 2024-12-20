@@ -52,11 +52,11 @@ public class MessageEvent extends Event implements Cancellable {
         this.audience = audience;
     }
 
-    public @NotNull TagResolver[] getResolvers() {
+    public @NotNull TagResolver @Nullable [] getResolvers() {
         return resolvers;
     }
 
-    public void setResolvers(@NotNull TagResolver[] replacingResolvers) {
+    public void setResolvers(@NotNull TagResolver @Nullable [] replacingResolvers) {
         this.resolvers = replacingResolvers;
     }
 }

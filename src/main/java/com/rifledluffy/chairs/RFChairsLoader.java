@@ -18,7 +18,7 @@ public class RFChairsLoader implements PluginLoader {
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build());
         resolver.addRepository(new RemoteRepository.Builder("bstats", "default", "https://repo.codemc.org/repository/maven-public").build());
 
-        resolver.addDependency(new Dependency(new DefaultArtifact("org.bstats:bstats-bukkit:3.0.2"), null)); // todo insert versions
+        resolver.addDependency(new Dependency(new DefaultArtifact("org.bstats:bstats-bukkit:3.1.0"), null)); // todo insert versions
         resolver.addDependency(new Dependency(new DefaultArtifact("com.github.ben-manes.caffeine:caffeine:3.1.8"), null));
         System.setProperty("bstats.relocatecheck", "false"); // bstats author is stubborn and only allows the use via relocation.
 
