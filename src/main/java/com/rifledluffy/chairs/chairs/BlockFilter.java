@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class BlockFilter {
@@ -15,7 +16,15 @@ public class BlockFilter {
     public static void reload() {
         FileConfiguration config = RFChairs.getInstance().getConfig();
         whitelist = new HashSet<>(config.getStringList("whitelisted-chairs"));
-        whitelist.addAll(config.getStringList("allowed-chairs")); // dataFixerUpper
+
+        // dataFixerUpper
+        if (config.contains("allowed-chairs")) {
+            whitelist.addAll(config.getStringList("allowed-chairs"));
+            config.set("allowed-chairs", null);
+            config.set("whitelisted-chairs", List.copyOf(whitelist));
+            RFChairs.getInstance().saveConfig();
+        }
+
         blacklist = new HashSet<>(config.getStringList("blacklisted-chairs"));
     }
 

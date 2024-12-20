@@ -647,8 +647,9 @@ public class ChairManager implements Listener {
             for (String fake : fakes) {
                 UUID id = UUID.fromString(fake);
                 Entity armorStand = plugin.getServer().getEntity(id);
-                if (armorStand == null) continue;
-                armorStand.remove();
+                if (armorStand != null) {
+                    armorStand.remove();
+                }
             }
             plugin.getConfigManager().getData().set("UUIDs", new ArrayList<UUID>());
         } else {
