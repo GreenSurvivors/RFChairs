@@ -108,24 +108,38 @@ public class ChairManager implements Listener {
         requireEmptyHand = config.getBoolean("require-empty-hand", false);
 
         try {
-            String[] vectorString = Objects.requireNonNull(config.getString("stair-seating-position", "0.5,0.3,0.5")).split(",");
+            String[] vectorString = Objects.requireNonNull(config.getString("stair-seating-position", "0.5,0.5,0.5")).split(",");
             stairSeatingPosition = new Vector(Double.parseDouble(vectorString[0]), Double.parseDouble(vectorString[1]), Double.parseDouble(vectorString[2]));
         } catch (NumberFormatException e) {
-            stairSeatingPosition = new Vector(0.5D, 0.3D, 0.5);
+            stairSeatingPosition = new Vector(0.5D, 0.5D, 0.5);
+        }
+
+        slabSeatingPosition = null;
+        if (config.contains("slab-seating-positiong")) { // DataFixerUpper; there was a typo in old default config. load it then delete it
+            try {
+                String[] vectorString = Objects.requireNonNull(config.getString("slab-seating-position")).split(",");
+                slabSeatingPosition = new Vector(Double.parseDouble(vectorString[0]), Double.parseDouble(vectorString[1]), Double.parseDouble(vectorString[2]));
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException ignored) {
+            }
+
+            config.set("slab-seating-positiong", null);
+            plugin.saveConfig();
+        }
+
+        if (slabSeatingPosition == null) {
+            try {
+                String[] vectorString = Objects.requireNonNull(config.getString("slab-seating-position", "0.5,0.5,0.5")).split(",");
+                slabSeatingPosition = new Vector(Double.parseDouble(vectorString[0]), Double.parseDouble(vectorString[1]), Double.parseDouble(vectorString[2]));
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                slabSeatingPosition = new Vector(0.5, 0.5D, 0.5);
+            }
         }
 
         try {
-            String[] vectorString = Objects.requireNonNull(config.getString("slab-seating-position", "0.5,0.3,0.5")).split(",");
-            slabSeatingPosition = new Vector(Double.parseDouble(vectorString[0]), Double.parseDouble(vectorString[1]), Double.parseDouble(vectorString[2]));
-        } catch (NumberFormatException e) {
-            slabSeatingPosition = new Vector(0.5, 0.3D, 0.5);
-        }
-
-        try {
-            String[] vectorString = Objects.requireNonNull(config.getString("carpet-seating-position", "0.5,-0.15,0.5")).split(",");
+            String[] vectorString = Objects.requireNonNull(config.getString("carpet-seating-position", "0.5,0.1,0.5")).split(",");
             carpetSeatingPosition = new Vector(Double.parseDouble(vectorString[0]), Double.parseDouble(vectorString[1]), Double.parseDouble(vectorString[2]));
         } catch (NumberFormatException e) {
-            carpetSeatingPosition = new Vector(0.5, -0.15D, 0.5);
+            carpetSeatingPosition = new Vector(0.5, 0.1D, 0.5);
         }
 
         disabledWorlds = config.getStringList("disabled-worlds").stream()
