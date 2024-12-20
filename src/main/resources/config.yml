@@ -1,9 +1,9 @@
 # Rifle's Chair plugin by Rifle D. Luffy
 # Version 6.0
 # #=============[Seat Configuration]=============##
-# stair-seating-position: The exact positions of where the armorstand spawns on a stair; default 0.35,0.3,0.5
-# slab-seating-position: The exact positions of where the armorstand spawns on a slab; default 0.5,0.3,0.5
-# carpet-seating-position: The exact positions of where the armorstand spawns on a carpet; default 0.5,-0.15,0.5
+# stair-seating-position: The exact positions of where the armorstand spawns on a stair; default 0.5,0.5,0.5
+# slab-seating-position: The exact positions of where the armorstand spawns on a slab; default 0.5,0.5,0.5
+# carpet-seating-position: The exact positions of where the armorstand spawns on a carpet; default 0.5,0.1,0.5
 # be careful when playing around with this feature!
 # in the format x,y,z where...
 # x is forward
@@ -31,12 +31,10 @@
 # regen-when-sitting: players regenerate when sitting on chairs
 # regen-potency: the regen potion effect level where 0 is level 1
 # allow-custom-messages: allow the use of custom messages when events are triggered
-# allowed-chairs: The chairs that people are allowed to sit on
-stair-seating-position: 0.5,0.3,0.5
-slab-seating-positiong: 0.5,0.3,0.5
-carpet-seating-position: 0.5,-0.15,0.5
-disable-update-message-if-on-latest: false
-disable-update-messages: false
+# whitelisted-chairs: The chairs that people are allowed to sit on
+stair-seating-position: 0.5,0.5,0.5
+slab-seating-position: 0.5,0.5,0.5
+carpet-seating-position: 0.5,0.1,0.5
 exit-seat-where-facing: false
 allow-trap-door-chairs: true
 require-empty-hand: false
@@ -54,9 +52,11 @@ regen-when-sitting: true
 regen-potency: 0
 allow-custom-messages: false
 priority-on-if-has-perm: true
-allowed-chairs:
-  - STAIRS*
-  - SLAB*
-  - CARPET*
+whitelisted-chairs:
+  - ALL_STAIRS
+  - ALL_SLABS
+  - ALL_CARPETS
 blacklisted-chairs: [ ]
 disabled-worlds: [ ]
+temp-mute-duration: 60
+language: 'en'

@@ -2,83 +2,86 @@ package com.rifledluffy.chairs.command;
 
 import com.rifledluffy.chairs.RFChairs;
 import com.rifledluffy.chairs.command.commands.*;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import com.rifledluffy.chairs.messages.MessagePath;
+import com.rifledluffy.chairs.messages.PlaceHolder;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.Location;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class CommandManager implements CommandExecutor {
-    private final String main = "rfchairs";
-    private final @NotNull ArrayList<@NotNull SubCommand> commands = new ArrayList<>();
+public class CommandManager extends Command {
+    private static final String MAIN_COMMAND = "rfchairs";
+    private final @NotNull ArrayList<@NotNull SubCommand> subCommands = new ArrayList<>();
 
     public CommandManager() {
+        super(MAIN_COMMAND, "The main prefix for other commands. Type /rfchairs help for more info", "/<command>", List.of("rfc"));
+    }
+
+    public static @NotNull String getMainCommand() {
+        return MAIN_COMMAND;
     }
 
     public void setup() {
-        RFChairs.getInstance().getCommand(main).setExecutor(this);
+        RFChairs.getInstance().getServer().getCommandMap().register("rfchairs", this);
 
-        this.commands.add(new HelpCommand());
+        this.subCommands.add(new HelpCommand());
         //this.commands.add(new InfoCommand());
-        this.commands.add(new ReloadCommand());
-        this.commands.add(new ResetCommand());
-        this.commands.add(new ToggleCommand());
-        this.commands.add(new MuteCommand());
+        this.subCommands.add(new ReloadCommand());
+        this.subCommands.add(new ResetCommand());
+        this.subCommands.add(new ToggleCommand());
+        this.subCommands.add(new MuteCommand());
     }
 
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] args) {
-        if (command.getName().equalsIgnoreCase(main)) {
-            if (args.length == 0) {
-                sender.sendMessage(ChatColor.RED + "Missing Arguments. Type /rfchairs help for info");
-                return true;
-            }
+    @Override
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+        if (args.length == 0) {
+            RFChairs.getInstance().getMessageManager().sendLang(sender, MessagePath.COMMAND_NOT_ENOUGH_ARGS);
+            return true;
+        }
 
-            SubCommand target = this.get(args[0]);
+        SubCommand target = this.getSubcommand(args[0]);
 
-            if (target == null) {
-                sender.sendMessage(ChatColor.RED + "Invalid subcommand");
-                return true;
-            }
+        if (target == null) {
+            RFChairs.getInstance().getMessageManager().sendLang(sender, MessagePath.COMMAND_INVALID_SUBCOMMAND,
+                    Placeholder.unparsed(PlaceHolder.ARGUMENT.getPlaceholder(), args[0]));
+            return true;
+        }
 
-            ArrayList<String> arrayList = new ArrayList<>();
+        // clear args from subcommand
+        ArrayList<String> subcommandArgList = new ArrayList<>(Arrays.asList(args));
+        subcommandArgList.removeFirst();
 
-            arrayList.addAll(Arrays.asList(args));
-            arrayList.remove(0);
-
-            if (target.checkPermission(sender)) {
-                if (target.needsPlayer()) {
-                    if (sender instanceof Player player) {
-                        target.onPlayerCommand(player, args);
-                    } else {
-                        sender.sendMessage("You need to be a player to use this command!");
-                    }
+        if (target.checkPermission(sender)) {
+            if (target.needsPlayer()) {
+                if (sender instanceof Player player) {
+                    target.onPlayerCommand(player, subcommandArgList);
                 } else {
-                    target.onCommand(sender, args);
+                    RFChairs.getInstance().getMessageManager().sendLang(sender, MessagePath.COMMAND_NOT_PLAYER);
                 }
             } else {
-                sender.sendMessage("No permission!");
+                target.onCommand(sender, subcommandArgList);
             }
+        } else {
+            RFChairs.getInstance().getMessageManager().sendLang(sender, MessagePath.COMMAND_NO_PERMISSION);
         }
 
         return true;
     }
 
-    private @Nullable SubCommand get(@NotNull String name) {
-        for (SubCommand sc : this.commands) {
+    private @Nullable SubCommand getSubcommand(@NotNull String name) {
+        for (SubCommand sc : this.subCommands) {
             if (sc.name().equalsIgnoreCase(name)) {
                 return sc;
             }
 
-            String[] aliases;
-            int length = (aliases = sc.aliases()).length;
-
-            for (int var5 = 0; var5 < length; ++var5) {
-                String alias = aliases[var5];
+            String[] aliases = sc.aliases();
+            for (String alias : aliases) {
                 if (name.equalsIgnoreCase(alias)) {
                     return sc;
                 }
@@ -86,5 +89,36 @@ public class CommandManager implements CommandExecutor {
             }
         }
         return null;
+    }
+
+    public @NotNull ArrayList<@NotNull SubCommand> getSubCommands() {
+        return subCommands;
+    }
+
+    @Override
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args, @Nullable Location location) {
+        if (args.length == 1) {
+            List<String> result = new ArrayList<>();
+
+            for (SubCommand subCommand : subCommands) {
+                if (subCommand.checkPermission(sender)) {
+                    result.add(subCommand.name());
+                }
+            }
+
+            return result;
+        } else if (args.length > 1) {
+            SubCommand subCommand = this.getSubcommand(args[0]);
+
+            if (subCommand != null && subCommand.checkPermission(sender)) {
+                // clear args from subcommand
+                ArrayList<String> subcommandArgList = new ArrayList<>(Arrays.asList(args));
+                subcommandArgList.removeFirst();
+
+                return subCommand.onTabComplete(sender, subcommandArgList);
+            }
+        }
+
+        return List.of();
     }
 }

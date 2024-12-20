@@ -1,15 +1,13 @@
 main: com.rifledluffy.chairs.RFChairs
+loader: com.rifledluffy.chairs.RFChairsLoader
 name: RFChairs
 api-version: '${apiVersion}'
 version: ${version}
 description: ${description}
 authors: [ Rifle D. Luffy, VicenteRD, carlpoole, i0xHeX, GreensurvivorsTeam ]
-softdepend: [ WorldGuard, WorldEdit ]
-commands:
-  rfchairs:
-    usage: /<command>
-    description: The main prefix for other commands. Type /rfchairs help for more info
-    aliases: [ rfc ]
+softdepend:
+  - WorldGuard
+  - WorldEdit
 permissions:
   rfchairs.use:
     description: Use of chairs

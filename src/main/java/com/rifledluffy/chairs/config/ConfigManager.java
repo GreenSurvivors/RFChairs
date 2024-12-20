@@ -1,10 +1,8 @@
 package com.rifledluffy.chairs.config;
 
 import com.rifledluffy.chairs.RFChairs;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -19,10 +17,8 @@ public class ConfigManager {
     private File configFile;
     private FileConfiguration fake;
     private File fakeFile;
-    private FileConfiguration message;
-    private File messageFile;
 
-    public void setup() throws IOException {
+    public void setup() {
         configFile = new File(plugin.getDataFolder(), "config.yml");
         config = plugin.getConfig();
         config.options().copyDefaults(true);
@@ -38,19 +34,11 @@ public class ConfigManager {
             try {
                 fakeFile.createNewFile();
             } catch (IOException e) {
-                Bukkit.getServer().getLogger().info("[Rifle's Chairs] Could not create fakes.yml!");
+                plugin.getLogger().info("Could not create fakes.yml!");
             }
         }
 
-        messageFile = new File(plugin.getDataFolder(), "messages.yml");
-
-        if (!messageFile.exists()) {
-            messageFile.getParentFile().mkdirs();
-            plugin.saveResource("messages.yml", false);
-        }
-
         fake = YamlConfiguration.loadConfiguration(fakeFile);
-        message = YamlConfiguration.loadConfiguration(messageFile);
     }
 
     public FileConfiguration getData() {
@@ -61,28 +49,12 @@ public class ConfigManager {
         try {
             fake.save(fakeFile);
         } catch (IOException e) {
-            Bukkit.getServer().getLogger().info("[Rifle's Chairs] Could not save fakes.yml!");
+            plugin.getLogger().info("Could not save fakes.yml!");
         }
     }
 
     public void reloadData() {
         fake = YamlConfiguration.loadConfiguration(fakeFile);
-    }
-
-    public FileConfiguration getMessages() {
-        return message;
-    }
-
-    public void saveMessages() {
-        try {
-            message.save(messageFile);
-        } catch (IOException e) {
-            plugin.getLogger().info("[Rifle's Chairs] Could not save messages.yml!");
-        }
-    }
-
-    public void reloadMessages() {
-        message = YamlConfiguration.loadConfiguration(messageFile);
     }
 
     public FileConfiguration getConfig() {
@@ -99,9 +71,5 @@ public class ConfigManager {
 
     public void reloadConfig() {
         config = YamlConfiguration.loadConfiguration(configFile);
-    }
-
-    public PluginDescriptionFile getDesc() {
-        return plugin.getDescription();
     }
 }
