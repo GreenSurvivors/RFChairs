@@ -16,7 +16,7 @@ public class ResetCommand implements SubCommand {
     public void onCommand(@NotNull CommandSender sender, @NotNull List<@NotNull String> args) {
         plugin.getChairManager().clearFakeSeats();
         plugin.getChairManager().clearFakeSeatsFromFile();
-        plugin.getLogger().info("Chairs Reset!");
+        plugin.getComponentLogger().info("Chairs Reset!");
 
         plugin.getMessageManager().sendLang(sender, MessagePath.COMMAND_RESET_SUCCESS);
     }

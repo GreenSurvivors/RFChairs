@@ -14,20 +14,21 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class WorldGuardManager {
     private static StateFlag flag;
-    private final RFChairs plugin = RFChairs.getInstance();
-    private WorldGuard worldGuard;
+    private final RFChairs plugin;
+    private final @NotNull WorldGuardPlugin worldGuard;
 
-    public WorldGuardManager() {
-    }
+    public WorldGuardManager(final @NotNull RFChairs plugin) {
+        this.plugin = plugin;
 
-    public void setup() {
-        worldGuard = WorldGuard.getInstance();
+        if (plugin.getServer().getPluginManager().getPlugin("WorldGuard") instanceof WorldGuardPlugin worldGuardPlugin) {
+            worldGuard = worldGuardPlugin;
+        } else {
+            throw new IllegalStateException("WorldGuard plugin is not found!");
+        }
     }
 
     public void register() {
@@ -41,16 +42,6 @@ public class WorldGuardManager {
         }
     }
 
-    public @Nullable WorldGuardPlugin getWorldGuard() { // todo cache the plugin
-        Plugin plugin = this.plugin.getServer().getPluginManager().getPlugin("WorldGuard");
-
-        if (plugin instanceof WorldGuardPlugin worldGuardPlugin) {
-            return worldGuardPlugin;
-        } else {
-            return null;
-        }
-    }
-
     public boolean validateSeating(@NotNull Chair chair, @NotNull Player player) {
         RegionContainer container = getContainer();
         Location chairLocation = chair.getLocation();
@@ -58,7 +49,7 @@ public class WorldGuardManager {
 
         if (regionManager != null) {
             com.sk89q.worldedit.util.Location weLoc = BukkitAdapter.adapt(chairLocation);
-            LocalPlayer wgPlayer = getWorldGuard().wrapPlayer(player);
+            LocalPlayer wgPlayer = worldGuard.wrapPlayer(player);
             ApplicableRegionSet applicableRegions = regionManager.getApplicableRegions(weLoc.toVector().toBlockPoint());
             return applicableRegions.testState(wgPlayer, getFlag());
         } else {
@@ -67,7 +58,7 @@ public class WorldGuardManager {
     }
 
     public RegionContainer getContainer() {
-        return worldGuard.getPlatform().getRegionContainer();
+        return WorldGuard.getInstance().getPlatform().getRegionContainer();
     }
 
     public @NotNull StateFlag getFlag() {

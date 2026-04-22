@@ -6,7 +6,8 @@ import com.rifledluffy.chairs.messages.MessagePath;
 import com.rifledluffy.chairs.messages.PlaceHolder;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,7 @@ public class CommandManager extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String @NotNull [] args) {
         if (args.length == 0) {
             RFChairs.getInstance().getMessageManager().sendLang(sender, MessagePath.COMMAND_NOT_ENOUGH_ARGS);
             return true;
@@ -96,7 +97,8 @@ public class CommandManager extends Command {
     }
 
     @Override
-    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String[] args, @Nullable Location location) {
+    public @NotNull List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String @NotNull [] args,
+                                             @Nullable Location location) {
         if (args.length == 1) {
             List<String> result = new ArrayList<>();
 

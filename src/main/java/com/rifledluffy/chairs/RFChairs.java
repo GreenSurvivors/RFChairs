@@ -23,27 +23,19 @@ public class RFChairs extends JavaPlugin {
         return instance;
     }
 
-    private static void setInstance(@NotNull RFChairs instance) {
-        RFChairs.instance = instance;
-    }
-
     @Override
     public void onLoad() {
-        setInstance(this);
+        instance = this;
         loadWorldGuard();
     }
 
     private void loadWorldGuard() {
         try {
-            Class.forName("com.sk89q.worldguard.WorldGuard");
-            Class.forName("com.sk89q.worldedit.WorldEdit");
-            Class.forName("com.sk89q.worldedit.math.BlockVector3");
-            worldGuardManager = new WorldGuardManager();
-            worldGuardManager.setup();
-            getLogger().info("Found WorldGuard && WorldEdit! Applying Custom Flag...");
-        } catch (ClassNotFoundException e) {
-            getLogger().info("Missing either WorldGuard or WorldEdit! Disabling Custom Flag Features...");
-            getLogger().info("Latest WorldGuard/WorldEdit features could be missing. Please Update!");
+            worldGuardManager = new WorldGuardManager(this);
+            getComponentLogger().info("Found WorldGuard & WorldEdit! Applying Custom Flag...");
+        } catch (NoClassDefFoundError e) {
+            getComponentLogger().info("Missing either WorldGuard or WorldEdit! Disabling Custom Flag Features...");
+            getComponentLogger().info("Latest WorldGuard features could be missing. Please Update!", e);
         }
 
         if (worldGuardManager != null) {
@@ -53,8 +45,7 @@ public class RFChairs extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        @SuppressWarnings("unused")
-        Metrics metrics = new Metrics(this, 2979);
+        new Metrics(this, 2979);
 
         commandManager = new CommandManager();
         commandManager.setup();
@@ -74,7 +65,7 @@ public class RFChairs extends JavaPlugin {
         getServer().getPluginManager().registerEvents(chairManager, this);
         getServer().getPluginManager().registerEvents(messageManager, this);
 
-        getLogger().info("Rifle's Chairs has been enabled!");
+        getComponentLogger().info("Rifle's Chairs has been enabled!");
     }
 
     @Override
@@ -84,7 +75,7 @@ public class RFChairs extends JavaPlugin {
 
         chairManager.shutdown();
 
-        getLogger().info("Saving Configuration Files!");
+        getComponentLogger().info("Saving Configuration Files!");
         cfgManager.saveData();
 
         Bukkit.getOnlinePlayers().forEach(p -> { // todo just clearing regen from everyone is NOT right. should only clear sitting players
@@ -93,7 +84,7 @@ public class RFChairs extends JavaPlugin {
             if (regen.getDuration() > 1000) p.removePotionEffect(PotionEffectType.REGENERATION);
         });
 
-        getLogger().info("Rifle's Chairs has been disabled!");
+        getComponentLogger().info("Rifle's Chairs has been disabled!");
     }
 
     public void loadConfigManager() {

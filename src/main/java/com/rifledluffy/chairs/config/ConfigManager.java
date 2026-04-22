@@ -34,7 +34,7 @@ public class ConfigManager {
             try {
                 fakeFile.createNewFile();
             } catch (IOException e) {
-                plugin.getLogger().info("Could not create fakes.yml!");
+                plugin.getComponentLogger().info("Could not create fakes.yml!");
             }
         }
 
@@ -49,7 +49,7 @@ public class ConfigManager {
         try {
             fake.save(fakeFile);
         } catch (IOException e) {
-            plugin.getLogger().info("Could not save fakes.yml!");
+            plugin.getComponentLogger().info("Could not save fakes.yml!");
         }
     }
 
@@ -65,7 +65,7 @@ public class ConfigManager {
         try {
             config.save(configFile);
         } catch (IOException e) {
-            plugin.getLogger().info("[Rifle's Chairs] Could not save config.yml!");
+            plugin.getComponentLogger().info("[Rifle's Chairs] Could not save config.yml!");
         }
     }
 
