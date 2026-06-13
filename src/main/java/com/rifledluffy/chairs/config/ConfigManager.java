@@ -65,7 +65,7 @@ public class ConfigManager {
         try {
             config.save(configFile);
         } catch (IOException e) {
-            plugin.getComponentLogger().info("[Rifle's Chairs] Could not save config.yml!");
+            plugin.getComponentLogger().info("Could not save config.yml!");
         }
     }
 
