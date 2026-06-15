@@ -15,7 +15,7 @@ public class RFChairsLoader implements PluginLoader {
         classpathBuilder.getContext().getLogger().info("loading RFChairs libraries!");
 
         MavenLibraryResolver resolver = new MavenLibraryResolver();
-        resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build());
+        resolver.addRepository(new RemoteRepository.Builder("central", "default", MavenLibraryResolver.MAVEN_CENTRAL_DEFAULT_MIRROR).build());
         resolver.addRepository(new RemoteRepository.Builder("bstats", "default", "https://repo.codemc.org/repository/maven-public").build());
 
         resolver.addDependency(new Dependency(new DefaultArtifact("org.bstats:bstats-bukkit:3.1.0"), null)); // todo insert versions

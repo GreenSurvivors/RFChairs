@@ -7,7 +7,7 @@ plugins {
 group = "com.rifledluffy.chairs"
 version = "7.0.1-SNAPSHOT"
 description = "Chairs but Rifle's way."
-val mcVersion by extra("1.21.3")
+val mcVersion by extra("1.21.7")
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 java {
@@ -54,8 +54,8 @@ tasks {
 
     runServer {
         downloadPlugins {
-            modrinth("worldguard", "7.0.13-beta-1")
-            modrinth("worldedit", "Bu1zaaoc")
+            modrinth("worldguard", "7.0.14")
+            modrinth("worldedit", "p8T2aZ8U")
         }
     }
 }
